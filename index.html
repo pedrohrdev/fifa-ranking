@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking FIFA - Pedro, Benjamin e Gustavo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Ranking FIFA da Família</h1>
+
+    <!-- Tabela Geral -->
+    <h2>Tabela Geral</h2>
+    <table id="tabela-geral">
+        <thead>
+            <tr>
+                <th>Jogador</th>
+                <th>Pontos</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Pedro</td>
+                <td id="pontos-pedro">0</td>
+                <td><button onclick="removerPontos('Pedro')">Remover Pontos</button></td>
+            </tr>
+            <tr>
+                <td>Benjamin</td>
+                <td id="pontos-benjamin">0</td>
+                <td><button onclick="removerPontos('Benjamin')">Remover Pontos</button></td>
+            </tr>
+            <tr>
+                <td>Gustavo</td>
+                <td id="pontos-gustavo">0</td>
+                <td><button onclick="removerPontos('Gustavo')">Remover Pontos</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <button onclick="mostrarModal()">Adicionar Resultado</button>
+
+    <!-- Modal para adicionar resultado -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="fechar" onclick="fecharModal()">×</span>
+            <h3>Adicionar Resultado</h3>
+            <label for="jogador">Jogador:</label>
+            <select id="jogador">
+                <option value="Pedro">Pedro</option>
+                <option value="Benjamin">Benjamin</option>
+                <option value="Gustavo">Gustavo</option>
+            </select>
+            <label for="resultado">Resultado:</label>
+            <select id="resultado">
+                <option value="3">Vitória (3 pontos)</option>
+                <option value="1">Empate (1 ponto)</option>
+            </select>
+            <button onclick="adicionarPontos()">Confirmar</button>
+        </div>
+    </div>
+
+    <!-- Tabelas de Confrontos e Análise -->
+    <h2>Confrontos</h2>
+    
+    <h3>Pedro x Benjamin</h3>
+    <table id="pedro-benjamin">
+        <tr><td>Pontos Pedro:</td><td id="pontos-pedro-benjamin">0</td></tr>
+        <tr><td>Pontos Benjamin:</td><td id="pontos-benjamin-pedro">0</td></tr>
+    </table>
+    <button onclick="adicionarPontosConfronto('Pedro', 'Benjamin')">Pedro Ganhou</button>
+    <button onclick="adicionarPontosConfronto('Benjamin', 'Pedro')">Benjamin Ganhou</button>
+    <button onclick="adicionarEmpateConfronto('pedro-benjamin')">Empate</button>
+    <div class="analise">
+        <p id="sequencia-pedro-benjamin">Sequência de vitórias - Pedro: 0</p>
+        <p id="sequencia-benjamin-pedro">Sequência de vitórias - Benjamin: 0</p>
+        <p id="jejum-pedro-benjamin">Pedro não ganha de Benjamin há: 0 partidas</p>
+        <p id="jejum-benjamin-pedro">Benjamin não ganha de Pedro há: 0 partidas</p>
+    </div>
+
+    <h3>Pedro x Gustavo</h3>
+    <table id="pedro-gustavo">
+        <tr><td>Pontos Pedro:</td><td id="pontos-pedro-gustavo">0</td></tr>
+        <tr><td>Pontos Gustavo:</td><td id="pontos-gustavo-pedro">0</td></tr>
+    </table>
+    <button onclick="adicionarPontosConfronto('Pedro', 'Gustavo')">Pedro Ganhou</button>
+    <button onclick="adicionarPontosConfronto('Gustavo', 'Pedro')">Gustavo Ganhou</button>
+    <button onclick="adicionarEmpateConfronto('pedro-gustavo')">Empate</button>
+    <div class="analise">
+        <p id="sequencia-pedro-gustavo">Sequência de vitórias - Pedro: 0</p>
+        <p id="sequencia-gustavo-pedro">Sequência de vitórias - Gustavo: 0</p>
+        <p id="jejum-pedro-gustavo">Pedro não ganha de Gustavo há: 0 partidas</p>
+        <p id="jejum-gustavo-pedro">Gustavo não ganha de Pedro há: 0 partidas</p>
+    </div>
+
+    <h3>Benjamin x Gustavo</h3>
+    <table id="benjamin-gustavo">
+        <tr><td>Pontos Benjamin:</td><td id="pontos-benjamin-gustavo">0</td></tr>
+        <tr><td>Pontos Gustavo:</td><td id="pontos-gustavo-benjamin">0</td></tr>
+    </table>
+    <button onclick="adicionarPontosConfronto('Benjamin', 'Gustavo')">Benjamin Ganhou</button>
+    <button onclick="adicionarPontosConfronto('Gustavo', 'Benjamin')">Gustavo Ganhou</button>
+    <button onclick="adicionarEmpateConfronto('benjamin-gustavo')">Empate</button>
+    <div class="analise">
+        <p id="sequencia-benjamin-gustavo">Sequência de vitórias - Benjamin: 0</p>
+        <p id="sequencia-gustavo-benjamin">Sequência de vitórias - Gustavo: 0</p>
+        <p id="jejum-benjamin-gustavo">Benjamin não ganha de Gustavo há: 0 partidas</p>
+        <p id="jejum-gustavo-benjamin">Gustavo não ganha de Benjamin há: 0 partidas</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

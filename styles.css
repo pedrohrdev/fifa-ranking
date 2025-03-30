@@ -1,0 +1,195 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298, #1e3c72);
+    background-size: 200% 200%;
+    animation: backgroundShift 10s ease infinite;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    margin: 0;
+    min-height: 100vh;
+}
+
+h1 {
+    font-size: 2.5em;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    animation: bounceIn 1s ease-in-out;
+}
+
+h2, h3 {
+    color: #ffd700;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    animation: fadeInGlow 1.5s infinite alternate;
+}
+
+table {
+    width: 50%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    animation: spinIn 0.8s ease-out;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+th {
+    background-color: #ff4500;
+    color: white;
+    text-transform: uppercase;
+    animation: pulse 2s infinite;
+}
+
+td {
+    color: #333;
+}
+
+tr:hover {
+    background-color: rgba(255, 215, 0, 0.2);
+    transform: scale(1.02);
+}
+
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    background: linear-gradient(45deg, #ff4500, #ff8c00);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
+    animation: buttonPulse 1.5s infinite;
+}
+
+button:hover {
+    transform: scale(1.1) rotate(2deg);
+    background: linear-gradient(45deg, #ff8c00, #ffa500);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    animation: none;
+}
+
+button:active {
+    transform: scale(0.9);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    animation: fadeInZoom 0.5s;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #ffffff, #f0f0f0);
+    margin: 15% auto;
+    padding: 20px;
+    width: 350px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    animation: zoomIn 0.5s ease-out;
+}
+
+.fechar {
+    color: #ff4500;
+    float: right;
+    font-size: 28px;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.fechar:hover {
+    color: #ff8c00;
+    transform: rotate(90deg);
+}
+
+select, label {
+    display: block;
+    margin: 10px 0;
+    color: #333;
+    animation: slideUp 0.5s ease-out;
+}
+
+.analise {
+    margin: 15px auto;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    width: 50%;
+    color: #333;
+    animation: slideUp 0.8s ease-out;
+}
+
+.analise p {
+    margin: 5px 0;
+    font-size: 0.9em;
+}
+
+/* Animações */
+@keyframes backgroundShift {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 100%; }
+    100% { background-position: 0% 0%; }
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0); opacity: 0; }
+    60% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+@keyframes fadeInGlow {
+    from { opacity: 0.7; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); }
+    to { opacity: 1; text-shadow: 1px 1px 10px rgba(255, 215, 0, 0.8); }
+}
+
+@keyframes spinIn {
+    from { transform: rotateY(90deg); opacity: 0; }
+    to { transform: rotateY(0); opacity: 1; }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes buttonPulse {
+    0% { transform: scale(1); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); }
+    50% { transform: scale(1.05); box-shadow: 0 4px 15px rgba(255, 69, 0, 0.6); }
+    100% { transform: scale(1); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); }
+}
+
+@keyframes fadeInZoom {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes dance {
+    0% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.3) rotate(5deg); }
+    50% { transform: scale(1.3) rotate(-5deg); }
+    75% { transform: scale(1.3) rotate(5deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
