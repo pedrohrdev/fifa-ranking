@@ -69,14 +69,20 @@ button {
     animation: buttonPulse 1.5s infinite;
 }
 
-button:hover {
+button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    animation: none;
+}
+
+button:hover:not(:disabled) {
     transform: scale(1.1) rotate(2deg);
     background: linear-gradient(45deg, #ff8c00, #ffa500);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
     animation: none;
 }
 
-button:active {
+button:active:not(:disabled) {
     transform: scale(0.9);
 }
 
@@ -134,6 +140,24 @@ select, label {
 .analise p {
     margin: 5px 0;
     font-size: 0.9em;
+}
+
+/* Estilos para autenticação */
+#auth-section {
+    margin: 20px auto;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    width: 50%;
+    color: #333;
+}
+
+#auth-section input {
+    padding: 8px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 200px;
 }
 
 /* Animações */

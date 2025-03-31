@@ -5,9 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ranking FIFA - Pedro, Benjamin e Gustavo</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Adiciona o Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
 </head>
 <body>
     <h1>Ranking FIFA da Família</h1>
+
+    <!-- Autenticação -->
+    <div id="auth-section">
+        <h2 id="auth-status">Você não está logado</h2>
+        <div id="login-form" style="display: none;">
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="password" placeholder="Senha">
+            <button onclick="login()">Entrar</button>
+        </div>
+        <button id="login-toggle" onclick="toggleLoginForm()">Fazer Login</button>
+        <button id="logout" onclick="logout()" style="display: none;">Sair</button>
+    </div>
 
     <!-- Tabela Geral -->
     <h2>Tabela Geral</h2>
@@ -19,25 +35,10 @@
                 <th>Ações</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td>Pedro</td>
-                <td id="pontos-pedro">0</td>
-                <td><button onclick="removerPontos('Pedro')">Remover Pontos</button></td>
-            </tr>
-            <tr>
-                <td>Benjamin</td>
-                <td id="pontos-benjamin">0</td>
-                <td><button onclick="removerPontos('Benjamin')">Remover Pontos</button></td>
-            </tr>
-            <tr>
-                <td>Gustavo</td>
-                <td id="pontos-gustavo">0</td>
-                <td><button onclick="removerPontos('Gustavo')">Remover Pontos</button></td>
-            </tr>
-        </tbody>
+        <tbody id="tabela-corpo"></tbody>
     </table>
-    <button onclick="mostrarModal()">Adicionar Resultado</button>
+    <button id="adicionar-resultado" onclick="mostrarModal()">Adicionar Resultado</button>
+    <button id="resetar-pontos" onclick="resetarPontos()">Resetar Pontos</button>
 
     <!-- Modal para adicionar resultado -->
     <div id="modal" class="modal">
@@ -67,9 +68,9 @@
         <tr><td>Pontos Pedro:</td><td id="pontos-pedro-benjamin">0</td></tr>
         <tr><td>Pontos Benjamin:</td><td id="pontos-benjamin-pedro">0</td></tr>
     </table>
-    <button onclick="adicionarPontosConfronto('Pedro', 'Benjamin')">Pedro Ganhou</button>
-    <button onclick="adicionarPontosConfronto('Benjamin', 'Pedro')">Benjamin Ganhou</button>
-    <button onclick="adicionarEmpateConfronto('pedro-benjamin')">Empate</button>
+    <button id="pedro-ganhou-pb" onclick="adicionarPontosConfronto('Pedro', 'Benjamin')">Pedro Ganhou</button>
+    <button id="benjamin-ganhou-pb" onclick="adicionarPontosConfronto('Benjamin', 'Pedro')">Benjamin Ganhou</button>
+    <button id="empate-pb" onclick="adicionarEmpateConfronto('pedro-benjamin')">Empate</button>
     <div class="analise">
         <p id="sequencia-pedro-benjamin">Sequência de vitórias - Pedro: 0</p>
         <p id="sequencia-benjamin-pedro">Sequência de vitórias - Benjamin: 0</p>
@@ -82,9 +83,9 @@
         <tr><td>Pontos Pedro:</td><td id="pontos-pedro-gustavo">0</td></tr>
         <tr><td>Pontos Gustavo:</td><td id="pontos-gustavo-pedro">0</td></tr>
     </table>
-    <button onclick="adicionarPontosConfronto('Pedro', 'Gustavo')">Pedro Ganhou</button>
-    <button onclick="adicionarPontosConfronto('Gustavo', 'Pedro')">Gustavo Ganhou</button>
-    <button onclick="adicionarEmpateConfronto('pedro-gustavo')">Empate</button>
+    <button id="pedro-ganhou-pg" onclick="adicionarPontosConfronto('Pedro', 'Gustavo')">Pedro Ganhou</button>
+    <button id="gustavo-ganhou-pg" onclick="adicionarPontosConfronto('Gustavo', 'Pedro')">Gustavo Ganhou</button>
+    <button id="empate-pg" onclick="adicionarEmpateConfronto('pedro-gustavo')">Empate</button>
     <div class="analise">
         <p id="sequencia-pedro-gustavo">Sequência de vitórias - Pedro: 0</p>
         <p id="sequencia-gustavo-pedro">Sequência de vitórias - Gustavo: 0</p>
@@ -97,14 +98,21 @@
         <tr><td>Pontos Benjamin:</td><td id="pontos-benjamin-gustavo">0</td></tr>
         <tr><td>Pontos Gustavo:</td><td id="pontos-gustavo-benjamin">0</td></tr>
     </table>
-    <button onclick="adicionarPontosConfronto('Benjamin', 'Gustavo')">Benjamin Ganhou</button>
-    <button onclick="adicionarPontosConfronto('Gustavo', 'Benjamin')">Gustavo Ganhou</button>
-    <button onclick="adicionarEmpateConfronto('benjamin-gustavo')">Empate</button>
+    <button id="benjamin-ganhou-bg" onclick="adicionarPontosConfronto('Benjamin', 'Gustavo')">Benjamin Ganhou</button>
+    <button id="gustavo-ganhou-bg" onclick="adicionarPontosConfronto('Gustavo', 'Benjamin')">Gustavo Ganhou</button>
+    <button id="empate-bg" onclick="adicionarEmpateConfronto('benjamin-gustavo')">Empate</button>
     <div class="analise">
         <p id="sequencia-benjamin-gustavo">Sequência de vitórias - Benjamin: 0</p>
         <p id="sequencia-gustavo-benjamin">Sequência de vitórias - Gustavo: 0</p>
         <p id="jejum-benjamin-gustavo">Benjamin não ganha de Gustavo há: 0 partidas</p>
         <p id="jejum-gustavo-benjamin">Gustavo não ganha de Benjamin há: 0 partidas</p>
+    </div>
+
+    <!-- Elementos ocultos para armazenar pontos -->
+    <div style="display: none;">
+        <span id="pontos-pedro">0</span>
+        <span id="pontos-benjamin">0</span>
+        <span id="pontos-gustavo">0</span>
     </div>
 
     <script src="script.js"></script>

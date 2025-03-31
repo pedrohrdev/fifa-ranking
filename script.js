@@ -1,54 +1,220 @@
-// Inicialização com recuperação do localStorage
-let historico = JSON.parse(localStorage.getItem('historico')) || {
+// Configuração do Firebase (substitua pelo seu firebaseConfig)
+const firebaseConfig = {
+    apiKey: "AIzaSyBXqicT9feP8L4GLb86pzZXwFsDAPRUagE",
+    authDomain: "fifa-ranking-family.firebaseapp.com",
+    databaseURL: "https://fifa-ranking-family-default-rtdb.firebaseio.com",
+    projectId: "fifa-ranking-family",
+    storageBucket: "fifa-ranking-family.firebasestorage.app",
+    messagingSenderId: "639708879392",
+    appId: "1:639708879392:web:ea5b07d32517972eaf3a45"
+};
+
+// Inicializa o Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+const auth = firebase.auth();
+
+// Estado inicial dos dados
+let historico = {
     "pedro-benjamin": [],
     "pedro-gustavo": [],
     "benjamin-gustavo": []
 };
 
-let sequencias = JSON.parse(localStorage.getItem('sequencias')) || {
+let sequencias = {
     "Pedro": { "benjamin": 0, "gustavo": 0 },
     "Benjamin": { "pedro": 0, "gustavo": 0 },
     "Gustavo": { "pedro": 0, "benjamin": 0 }
 };
 
-let jejuns = JSON.parse(localStorage.getItem('jejuns')) || {
+let jejuns = {
     "Pedro": { "benjamin": 0, "gustavo": 0 },
     "Benjamin": { "pedro": 0, "gustavo": 0 },
     "Gustavo": { "pedro": 0, "benjamin": 0 }
 };
 
-// Função para salvar no localStorage
+// Função para salvar no Firebase
 function salvarDados() {
-    localStorage.setItem('historico', JSON.stringify(historico));
-    localStorage.setItem('sequencias', JSON.stringify(sequencias));
-    localStorage.setItem('jejuns', JSON.stringify(jejuns));
-    // Salva os pontos das tabelas
-    localStorage.setItem('pontos-pedro', document.getElementById('pontos-pedro').innerText);
-    localStorage.setItem('pontos-benjamin', document.getElementById('pontos-benjamin').innerText);
-    localStorage.setItem('pontos-gustavo', document.getElementById('pontos-gustavo').innerText);
-    localStorage.setItem('pontos-pedro-benjamin', document.getElementById('pontos-pedro-benjamin').innerText);
-    localStorage.setItem('pontos-benjamin-pedro', document.getElementById('pontos-benjamin-pedro').innerText);
-    localStorage.setItem('pontos-pedro-gustavo', document.getElementById('pontos-pedro-gustavo').innerText);
-    localStorage.setItem('pontos-gustavo-pedro', document.getElementById('pontos-gustavo-pedro').innerText);
-    localStorage.setItem('pontos-benjamin-gustavo', document.getElementById('pontos-benjamin-gustavo').innerText);
-    localStorage.setItem('pontos-gustavo-benjamin', document.getElementById('pontos-gustavo-benjamin').innerText);
+    database.ref('historico').set(historico);
+    database.ref('sequencias').set(sequencias);
+    database.ref('jejuns').set(jejuns);
+    database.ref('pontos/pedro').set(document.getElementById('pontos-pedro').innerText);
+    database.ref('pontos/benjamin').set(document.getElementById('pontos-benjamin').innerText);
+    database.ref('pontos/gustavo').set(document.getElementById('pontos-gustavo').innerText);
+    database.ref('pontos/pedro-benjamin').set(document.getElementById('pontos-pedro-benjamin').innerText);
+    database.ref('pontos/benjamin-pedro').set(document.getElementById('pontos-benjamin-pedro').innerText);
+    database.ref('pontos/pedro-gustavo').set(document.getElementById('pontos-pedro-gustavo').innerText);
+    database.ref('pontos/gustavo-pedro').set(document.getElementById('pontos-gustavo-pedro').innerText);
+    database.ref('pontos/benjamin-gustavo').set(document.getElementById('pontos-benjamin-gustavo').innerText);
+    database.ref('pontos/gustavo-benjamin').set(document.getElementById('pontos-gustavo-benjamin').innerText);
 }
 
-// Carrega os dados salvos ao iniciar
+// Carrega os dados do Firebase ao iniciar
 window.onload = function() {
-    document.getElementById('pontos-pedro').innerText = localStorage.getItem('pontos-pedro') || '0';
-    document.getElementById('pontos-benjamin').innerText = localStorage.getItem('pontos-benjamin') || '0';
-    document.getElementById('pontos-gustavo').innerText = localStorage.getItem('pontos-gustavo') || '0';
-    document.getElementById('pontos-pedro-benjamin').innerText = localStorage.getItem('pontos-pedro-benjamin') || '0';
-    document.getElementById('pontos-benjamin-pedro').innerText = localStorage.getItem('pontos-benjamin-pedro') || '0';
-    document.getElementById('pontos-pedro-gustavo').innerText = localStorage.getItem('pontos-pedro-gustavo') || '0';
-    document.getElementById('pontos-gustavo-pedro').innerText = localStorage.getItem('pontos-gustavo-pedro') || '0';
-    document.getElementById('pontos-benjamin-gustavo').innerText = localStorage.getItem('pontos-benjamin-gustavo') || '0';
-    document.getElementById('pontos-gustavo-benjamin').innerText = localStorage.getItem('pontos-gustavo-benjamin') || '0';
+    database.ref('pontos').once('value', (snapshot) => {
+        const pontos = snapshot.val() || {};
+        document.getElementById('pontos-pedro').innerText = pontos.pedro || '0';
+        document.getElementById('pontos-benjamin').innerText = pontos.benjamin || '0';
+        document.getElementById('pontos-gustavo').innerText = pontos.gustavo || '0';
+        document.getElementById('pontos-pedro-benjamin').innerText = pontos['pedro-benjamin'] || '0';
+        document.getElementById('pontos-benjamin-pedro').innerText = pontos['benjamin-pedro'] || '0';
+        document.getElementById('pontos-pedro-gustavo').innerText = pontos['pedro-gustavo'] || '0';
+        document.getElementById('pontos-gustavo-pedro').innerText = pontos['gustavo-pedro'] || '0';
+        document.getElementById('pontos-benjamin-gustavo').innerText = pontos['benjamin-gustavo'] || '0';
+        document.getElementById('pontos-gustavo-benjamin').innerText = pontos['gustavo-benjamin'] || '0';
+        atualizarTabelaGeral();
+    });
+
+    database.ref('historico').once('value', (snapshot) => {
+        historico = snapshot.val() || historico;
+    });
+
+    database.ref('sequencias').once('value', (snapshot) => {
+        sequencias = snapshot.val() || sequencias;
+    });
+
+    database.ref('jejuns').once('value', (snapshot) => {
+        jejuns = snapshot.val() || jejuns;
+        const confrontos = ["pedro-benjamin", "pedro-gustavo", "benjamin-gustavo"];
+        confrontos.forEach(confronto => {
+            const jogador1 = confronto.split("-")[0];
+            const jogador2 = confronto.split("-")[1];
+            document.getElementById(`sequencia-${jogador1}-${jogador2}`).innerText = `Sequência de vitórias - ${jogador1}: ${sequencias[jogador1][jogador2]}`;
+            document.getElementById(`sequencia-${jogador2}-${jogador1}`).innerText = `Sequência de vitórias - ${jogador2}: ${sequencias[jogador2][jogador1]}`;
+            document.getElementById(`jejum-${jogador1}-${jogador2}`).innerText = `${jogador1} não ganha de ${jogador2} há: ${jejuns[jogador1][jogador2]} partidas`;
+            document.getElementById(`jejum-${jogador2}-${jogador1}`).innerText = `${jogador2} não ganha de ${jogador1} há: ${jejuns[jogador2][jogador1]} partidas`;
+        });
+    });
+
+    // Verifica o estado de autenticação
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            document.getElementById('auth-status').innerText = `Logado como: ${user.email}`;
+            document.getElementById('login-toggle').style.display = 'none';
+            document.getElementById('logout').style.display = 'inline-block';
+            document.getElementById('login-form').style.display = 'none';
+            enableButtons();
+        } else {
+            document.getElementById('auth-status').innerText = 'Você não está logado';
+            document.getElementById('login-toggle').style.display = 'inline-block';
+            document.getElementById('logout').style.display = 'none';
+            disableButtons();
+        }
+    });
 };
 
-// Atualiza o localStorage após cada ação
+// Funções de autenticação
+function toggleLoginForm() {
+    const form = document.getElementById('login-form');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+            alert('Login bem-sucedido!');
+        })
+        .catch(error => {
+            alert('Erro ao fazer login: ' + error.message);
+        });
+}
+
+function logout() {
+    auth.signOut()
+        .then(() => {
+            alert('Logout bem-sucedido!');
+        })
+        .catch(error => {
+            alert('Erro ao fazer logout: ' + error.message);
+        });
+}
+
+function enableButtons() {
+    document.getElementById('adicionar-resultado').disabled = false;
+    document.getElementById('resetar-pontos').disabled = false;
+    document.getElementById('pedro-ganhou-pb').disabled = false;
+    document.getElementById('benjamin-ganhou-pb').disabled = false;
+    document.getElementById('empate-pb').disabled = false;
+    document.getElementById('pedro-ganhou-pg').disabled = false;
+    document.getElementById('gustavo-ganhou-pg').disabled = false;
+    document.getElementById('empate-pg').disabled = false;
+    document.getElementById('benjamin-ganhou-bg').disabled = false;
+    document.getElementById('gustavo-ganhou-bg').disabled = false;
+    document.getElementById('empate-bg').disabled = false;
+}
+
+function disableButtons() {
+    document.getElementById('adicionar-resultado').disabled = true;
+    document.getElementById('resetar-pontos').disabled = true;
+    document.getElementById('pedro-ganhou-pb').disabled = true;
+    document.getElementById('benjamin-ganhou-pb').disabled = true;
+    document.getElementById('empate-pb').disabled = true;
+    document.getElementById('pedro-ganhou-pg').disabled = true;
+    document.getElementById('gustavo-ganhou-pg').disabled = true;
+    document.getElementById('empate-pg').disabled = true;
+    document.getElementById('benjamin-ganhou-bg').disabled = true;
+    document.getElementById('gustavo-ganhou-bg').disabled = true;
+    document.getElementById('empate-bg').disabled = true;
+}
+
+// Função para atualizar a tabela geral com ordenação
+function atualizarTabelaGeral() {
+    const jogadores = [
+        { nome: "Pedro", pontosId: "pontos-pedro" },
+        { nome: "Benjamin", pontosId: "pontos-benjamin" },
+        { nome: "Gustavo", pontosId: "pontos-gustavo" }
+    ];
+
+    jogadores.sort((a, b) => {
+        const pontosA = parseInt(document.getElementById(a.pontosId).innerText);
+        const pontosB = parseInt(document.getElementById(b.pontosId).innerText);
+        return pontosB - pontosA;
+    });
+
+    const tbody = document.getElementById("tabela-corpo");
+    tbody.innerHTML = "";
+    jogadores.forEach(jogador => {
+        const pontos = document.getElementById(jogador.pontosId).innerText;
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${jogador.nome}</td>
+            <td>${pontos}</td>
+            <td><button onclick="removerPontos('${jogador.nome}')">Remover Pontos</button></td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function mostrarModal() {
+    if (!auth.currentUser) {
+        alert("Você precisa estar logado para adicionar resultados!");
+        return;
+    }
+    document.getElementById("modal").style.display = "block";
+}
+
+function fecharModal() {
+    document.getElementById("modal").style.display = "none";
+}
+
+function animarPontos(elementId) {
+    const elemento = document.getElementById(elementId);
+    elemento.style.transition = "color 0.5s";
+    elemento.style.color = "#ff4500";
+    elemento.style.animation = "dance 0.5s ease";
+    setTimeout(() => {
+        elemento.style.color = "#333";
+        elemento.style.animation = "none";
+    }, 500);
+}
+
 function adicionarPontos() {
+    if (!auth.currentUser) {
+        alert("Você precisa estar logado para adicionar pontos!");
+        return;
+    }
     const jogador = document.getElementById("jogador").value;
     const pontos = parseInt(document.getElementById("resultado").value);
     const elementoId = `pontos-${jogador.toLowerCase()}`;
@@ -58,9 +224,14 @@ function adicionarPontos() {
     animarPontos(elementoId);
     fecharModal();
     salvarDados();
+    atualizarTabelaGeral();
 }
 
 function removerPontos(jogador) {
+    if (!auth.currentUser) {
+        alert("Você precisa estar logado para remover pontos!");
+        return;
+    }
     const pontos = parseInt(prompt(`Quantos pontos deseja remover de ${jogador}?`));
     if (isNaN(pontos) || pontos < 0) {
         alert("Digite um número válido!");
@@ -77,6 +248,7 @@ function removerPontos(jogador) {
     document.getElementById(elementoId).innerText = pontosAtuais - pontos;
     animarPontos(elementoId);
     salvarDados();
+    atualizarTabelaGeral();
 }
 
 function atualizarAnalise(confronto, vencedor, perdedor) {
@@ -129,6 +301,10 @@ function atualizarAnalise(confronto, vencedor, perdedor) {
 }
 
 function adicionarPontosConfronto(vencedor, perdedor) {
+    if (!auth.currentUser) {
+        alert("Você precisa estar logado para adicionar pontos!");
+        return;
+    }
     const elementoGeral = `pontos-${vencedor.toLowerCase()}`;
     const pontosVencedorGeral = parseInt(document.getElementById(elementoGeral).innerText);
     document.getElementById(elementoGeral).innerText = pontosVencedorGeral + 3;
@@ -141,10 +317,14 @@ function adicionarPontosConfronto(vencedor, perdedor) {
 
     const confronto = `${vencedor.toLowerCase()}-${perdedor.toLowerCase()}`.split("-").sort().join("-");
     atualizarAnalise(confronto, vencedor, perdedor);
-    salvarDados();
+    atualizarTabelaGeral();
 }
 
 function adicionarEmpateConfronto(confronto) {
+    if (!auth.currentUser) {
+        alert("Você precisa estar logado para adicionar empate!");
+        return;
+    }
     let jogador1, jogador2;
     if (confronto === "pedro-benjamin") {
         jogador1 = "pedro";
@@ -176,7 +356,36 @@ function adicionarEmpateConfronto(confronto) {
     animarPontos(elemento2Confronto);
 
     atualizarAnalise(confronto, null, null);
-    salvarDados();
+    atualizarTabelaGeral();
 }
 
-// Funções existentes (mostrarModal, fecharModal, animarPontos) permanecem as mesmas
+function resetarPontos() {
+    if (!auth.currentUser) {
+        alert("Você precisa estar logado para resetar os pontos!");
+        return;
+    }
+    document.getElementById('pontos-pedro').innerText = '0';
+    document.getElementById('pontos-benjamin').innerText = '0';
+    document.getElementById('pontos-gustavo').innerText = '0';
+    document.getElementById('pontos-pedro-benjamin').innerText = '0';
+    document.getElementById('pontos-benjamin-pedro').innerText = '0';
+    document.getElementById('pontos-pedro-gustavo').innerText = '0';
+    document.getElementById('pontos-gustavo-pedro').innerText = '0';
+    document.getElementById('pontos-benjamin-gustavo').innerText = '0';
+    document.getElementById('pontos-gustavo-benjamin').innerText = '0';
+    historico = { "pedro-benjamin": [], "pedro-gustavo": [], "benjamin-gustavo": [] };
+    sequencias = { "Pedro": { "benjamin": 0, "gustavo": 0 }, "Benjamin": { "pedro": 0, "gustavo": 0 }, "Gustavo": { "pedro": 0, "benjamin": 0 } };
+    jejuns = { "Pedro": { "benjamin": 0, "gustavo": 0 }, "Benjamin": { "pedro": 0, "gustavo": 0 }, "Gustavo": { "pedro": 0, "benjamin": 0 } };
+    salvarDados();
+    atualizarTabelaGeral();
+    const confrontos = ["pedro-benjamin", "pedro-gustavo", "benjamin-gustavo"];
+    confrontos.forEach(confronto => {
+        const jogador1 = confronto.split("-")[0];
+        const jogador2 = confronto.split("-")[1];
+        document.getElementById(`sequencia-${jogador1}-${jogador2}`).innerText = `Sequência de vitórias - ${jogador1}: 0`;
+        document.getElementById(`sequencia-${jogador2}-${jogador1}`).innerText = `Sequência de vitórias - ${jogador2}: 0`;
+        document.getElementById(`jejum-${jogador1}-${jogador2}`).innerText = `${jogador1} não ganha de ${jogador2} há: 0 partidas`;
+        document.getElementById(`jejum-${jogador2}-${jogador1}`).innerText = `${jogador2} não ganha de ${jogador1} há: 0 partidas`;
+    });
+    alert("Pontos resetados com sucesso!");
+}
