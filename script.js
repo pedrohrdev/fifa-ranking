@@ -1,12 +1,12 @@
 // Configuração do Firebase (substitua pelo seu firebaseConfig)
 const firebaseConfig = {
-    apiKey: "SUA_API_KEY",
-    authDomain: "SEU_AUTH_DOMAIN",
-    databaseURL: "SUA_DATABASE_URL",
-    projectId: "SEU_PROJECT_ID",
-    storageBucket: "SEU_STORAGE_BUCKET",
-    messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-    appId: "SEU_APP_ID"
+    apiKey: "AIzaSyBXqicT9feP8L4GLb86pzZXwFsDAPRUagE",
+    authDomain: "fifa-ranking-family.firebaseapp.com",
+    databaseURL: "https://fifa-ranking-family-default-rtdb.firebaseio.com",
+    projectId: "fifa-ranking-family",
+    storageBucket: "fifa-ranking-family.firebasestorage.app",
+    messagingSenderId: "639708879392",
+    appId: "1:639708879392:web:ea5b07d32517972eaf3a45"
 };
 
 // Inicializa o Firebase
