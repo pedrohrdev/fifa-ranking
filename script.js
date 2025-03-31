@@ -1,16 +1,16 @@
 // Configuração do Firebase (substitua pelo seu firebaseConfig)
 const firebaseConfig = {
-    apiKey: "AIzaSyBXqicT9feP8L4GLb86pzZXwFsDAPRUagE",
-    authDomain: "fifa-ranking-family.firebaseapp.com",
-    databaseURL: "https://fifa-ranking-family-default-rtdb.firebaseio.com",
-    projectId: "fifa-ranking-family",
-    storageBucket: "fifa-ranking-family.firebasestorage.app",
-    messagingSenderId: "639708879392",
-    appId: "1:639708879392:web:ea5b07d32517972eaf3a45"
+    apiKey: "SUA_API_KEY",
+    authDomain: "SEU_AUTH_DOMAIN",
+    databaseURL: "SUA_DATABASE_URL",
+    projectId: "SEU_PROJECT_ID",
+    storageBucket: "SEU_STORAGE_BUCKET",
+    messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+    appId: "SEU_APP_ID"
 };
 
 // Inicializa o Firebase
-firebase.initializeApp(firebaseConfig);
+const app = firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 const auth = firebase.auth();
 
@@ -50,7 +50,7 @@ function salvarDados() {
 }
 
 // Carrega os dados do Firebase ao iniciar
-window.onload = function() {
+document.addEventListener('DOMContentLoaded', () => {
     database.ref('pontos').once('value', (snapshot) => {
         const pontos = snapshot.val() || {};
         document.getElementById('pontos-pedro').innerText = pontos.pedro || '0';
@@ -101,7 +101,23 @@ window.onload = function() {
             disableButtons();
         }
     });
-};
+
+    // Registrar eventos de clique
+    document.getElementById('login-toggle').addEventListener('click', toggleLoginForm);
+    document.getElementById('login-button').addEventListener('click', login);
+    document.getElementById('logout').addEventListener('click', logout);
+    document.getElementById('adicionar-resultado').addEventListener('click', mostrarModal);
+    document.getElementById('resetar-pontos').addEventListener('click', resetarPontos);
+    document.getElementById('pedro-ganhou-pb').addEventListener('click', () => adicionarPontosConfronto('Pedro', 'Benjamin'));
+    document.getElementById('benjamin-ganhou-pb').addEventListener('click', () => adicionarPontosConfronto('Benjamin', 'Pedro'));
+    document.getElementById('empate-pb').addEventListener('click', () => adicionarEmpateConfronto('pedro-benjamin'));
+    document.getElementById('pedro-ganhou-pg').addEventListener('click', () => adicionarPontosConfronto('Pedro', 'Gustavo'));
+    document.getElementById('gustavo-ganhou-pg').addEventListener('click', () => adicionarPontosConfronto('Gustavo', 'Pedro'));
+    document.getElementById('empate-pg').addEventListener('click', () => adicionarEmpateConfronto('pedro-gustavo'));
+    document.getElementById('benjamin-ganhou-bg').addEventListener('click', () => adicionarPontosConfronto('Benjamin', 'Gustavo'));
+    document.getElementById('gustavo-ganhou-bg').addEventListener('click', () => adicionarPontosConfronto('Gustavo', 'Benjamin'));
+    document.getElementById('empate-bg').addEventListener('click', () => adicionarEmpateConfronto('benjamin-gustavo'));
+});
 
 // Funções de autenticação
 function toggleLoginForm() {
